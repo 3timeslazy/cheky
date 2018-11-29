@@ -1,26 +1,23 @@
 package cheky
 
-// ErrorKeeper keeps errors.
-type ErrorKeeper interface {
-	// Keep keeps errors.
-	Keep(err error)
-}
-
 // QPBuilder creates new TBuilders that
 // take values from a path or query.
 // QPBuilder also keeps TBuilders errors inside.
 type QPBuilder interface {
+	ErrorKeeper
 	Query(param string) TBuilder
 	Path(param string) TBuilder
 }
 
 // TBuilder returns a typed builder:
-// IntBuilder, BoolBuilder etc.
+// IntChecker, BoolChecker etc.
 type TBuilder interface {
+	ErrorKeeper
+	Bool(*bool) BoolChecker
 }
 
-// Context keeps query and path parameters.
-type Context interface {
-	Query(name string) string
-	Path(name string) string
+// ErrorKeeper keeps and returns errors.
+type ErrorKeeper interface {
+	Keep(err error)
+	Err() error
 }
