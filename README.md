@@ -21,12 +21,17 @@ Cheky is an invisible, small validator of path or query parameters.
   .Ge(i64 int64)
   .Lt(i64 int64)
   .Le(i64 int64)
-  .OneOf(i64 ...int64)
-  .NoOne(i64 ...int64)
+  .OneOf(strs ...string)
+  .NoOne(strs ...string)
   .Regexp(re string)
+.Duration(dn *time.Duration)
+  .Gt(i64 int64)
+  .Ge(i64 int64)
+  .Lt(i64 int64)
+  .Le(i64 int64)
 ```
 
-## How it should work
+## Example
 ```golang
 package handlers
 
