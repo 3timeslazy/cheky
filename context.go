@@ -8,5 +8,5 @@ type Context interface {
 
 // Ctx returns new QPBuilder from a given Context.
 func Ctx(ctx Context) QPBuilder {
-	return &QueryPath{ctx: ctx}
+	return &queryPath{ctx: ctx}
 }

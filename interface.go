@@ -14,6 +14,7 @@ type QPBuilder interface {
 type TBuilder interface {
 	ErrorKeeper
 	Bool(*bool) BoolChecker
+	Str(*string) StringChecker
 }
 
 // ErrorKeeper keeps and returns errors.

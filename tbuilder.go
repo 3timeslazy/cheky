@@ -7,20 +7,20 @@ import (
 
 // types implements TBuilder interface.
 type types struct {
-	keeper ErrorKeeper
-	val    string
+	errkp ErrorKeeper
+	val   string
 }
 
 // Keep keeps an error in a
 // nested ErrorKeeper.
 func (t *types) Keep(err error) {
-	t.keeper.Keep(err)
+	t.errkp.Keep(err)
 }
 
 // Err returns an error stored in
 // a nested ErrorKeeper
 func (t *types) Err() error {
-	return t.keeper.Err()
+	return t.errkp.Err()
 }
 
 // Bool returns BoolChecker.
@@ -34,17 +34,27 @@ func (t *types) Bool(boolean *bool) BoolChecker {
 		t.Keep(err)
 	}
 	*boolean = b
-	return &booleans{keeper: t, val: boolean}
+	return &booleans{val: boolean, keeper: t}
 }
 
 func parseBool(s string) (b bool, err error) {
-	switch s {
-	case strings.ToLower("true"), "1":
+	switch strings.ToLower(s) {
+	case "true", "1":
 		b = true
-	case strings.ToLower("false"), "0":
+	case "false", "0":
 		b = false
 	default:
 		err = fmt.Errorf("value '%s' isn't boolean", s)
 	}
 	return
+}
+
+// Str returns StringChecker.
+// Result value will be stored into str.
+func (t *types) Str(str *string) StringChecker {
+	*str = t.val
+	return &stringChecker{
+		errkp: t,
+		val:   str,
+	}
 }

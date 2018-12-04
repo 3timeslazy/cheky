@@ -30,7 +30,7 @@ func TestBool(t *testing.T) {
 	Convey("param=true", t, func() {
 		check, b := init("true")
 
-		check.Query("").Bool(&b).True()
+		check.Query("true").Bool(&b).True()
 
 		So(check.Err(), ShouldBeNil)
 		So(b, ShouldBeTrue)
@@ -39,7 +39,7 @@ func TestBool(t *testing.T) {
 	Convey("param=false", t, func() {
 		check, b := init("false")
 
-		check.Query("").Bool(&b).False()
+		check.Query("false").Bool(&b).False()
 
 		So(check.Err(), ShouldBeNil)
 		So(b, ShouldBeFalse)
@@ -48,7 +48,7 @@ func TestBool(t *testing.T) {
 	Convey("param=qwerty", t, func() {
 		check, b := init("qwerty")
 
-		check.Query("").Bool(&b)
+		check.Query("qwerty").Bool(&b)
 
 		So(check.Err(), ShouldBeError)
 		So(b, ShouldBeFalse)
@@ -57,7 +57,7 @@ func TestBool(t *testing.T) {
 	Convey("param=true, but need false", t, func() {
 		check, b := init("true")
 
-		check.Query("").Bool(&b).False()
+		check.Query("true").Bool(&b).False()
 
 		So(check.Err(), ShouldBeError)
 		So(b, ShouldBeTrue)
@@ -66,7 +66,7 @@ func TestBool(t *testing.T) {
 	Convey("param=1", t, func() {
 		check, b := init("1")
 
-		check.Query("").Bool(&b)
+		check.Query("1").Bool(&b)
 
 		So(check.Err(), ShouldBeNil)
 		So(b, ShouldBeTrue)
@@ -75,9 +75,18 @@ func TestBool(t *testing.T) {
 	Convey("param=true, but need false", t, func() {
 		check, b := init("true")
 
-		check.Query("").Bool(&b).Not()
+		check.Query("true").Bool(&b).Not()
 
 		So(check.Err(), ShouldBeNil)
 		So(b, ShouldBeFalse)
+	})
+
+	Convey("param=tRuE", t, func() {
+		check, b := init("tRue")
+
+		check.Query("tRuE").Bool(&b)
+
+		So(check.Err(), ShouldBeNil)
+		So(b, ShouldBeTrue)
 	})
 }
