@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/3timeslazy/cheky"
-
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -23,7 +22,7 @@ func NewContext(q, p string) cheky.Context {
 }
 
 func TestBool(t *testing.T) {
-	init := func(param string) (cheky.QPBuilder, bool) {
+	init := func(param string) (cheky.Checker, bool) {
 		return cheky.Ctx(NewContext(param, "any")), false
 	}
 
@@ -70,15 +69,6 @@ func TestBool(t *testing.T) {
 
 		So(check.Err(), ShouldBeNil)
 		So(b, ShouldBeTrue)
-	})
-
-	Convey("param=true, but need false", t, func() {
-		check, b := init("true")
-
-		check.Query("true").Bool(&b).Not()
-
-		So(check.Err(), ShouldBeNil)
-		So(b, ShouldBeFalse)
 	})
 
 	Convey("param=tRuE", t, func() {

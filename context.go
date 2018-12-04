@@ -6,7 +6,11 @@ type Context interface {
 	Path(name string) string
 }
 
-// Ctx returns new QPBuilder from a given Context.
-func Ctx(ctx Context) QPBuilder {
-	return &queryPath{ctx: ctx}
+// Ctx returns new Checker from a given Context.
+func Ctx(ctx Context) Checker {
+	return Checker{
+		ctx:   ctx,
+		path:  map[string][]check{},
+		query: map[string][]check{},
+	}
 }
