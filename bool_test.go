@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/3timeslazy/cheky"
+
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -22,12 +23,9 @@ func NewContext(q, p string) cheky.Context {
 }
 
 func TestBool(t *testing.T) {
-	init := func(param string) (cheky.Checker, bool) {
-		return cheky.Ctx(NewContext(param, "any")), false
-	}
-
 	Convey("param=true", t, func() {
-		check, b := init("true")
+		check := newCheck("true")
+		b := false
 
 		check.Query("true").Bool(&b).True()
 
@@ -36,7 +34,8 @@ func TestBool(t *testing.T) {
 	})
 
 	Convey("param=false", t, func() {
-		check, b := init("false")
+		check := newCheck("false")
+		b := false
 
 		check.Query("false").Bool(&b).False()
 
@@ -45,7 +44,8 @@ func TestBool(t *testing.T) {
 	})
 
 	Convey("param=qwerty", t, func() {
-		check, b := init("qwerty")
+		check := newCheck("qwerty")
+		b := false
 
 		check.Query("qwerty").Bool(&b)
 
@@ -54,7 +54,8 @@ func TestBool(t *testing.T) {
 	})
 
 	Convey("param=true, but need false", t, func() {
-		check, b := init("true")
+		check := newCheck("true")
+		b := false
 
 		check.Query("true").Bool(&b).False()
 
@@ -63,7 +64,8 @@ func TestBool(t *testing.T) {
 	})
 
 	Convey("param=1", t, func() {
-		check, b := init("1")
+		check := newCheck("1")
+		b := false
 
 		check.Query("1").Bool(&b)
 
@@ -72,7 +74,8 @@ func TestBool(t *testing.T) {
 	})
 
 	Convey("param=tRuE", t, func() {
-		check, b := init("tRue")
+		check := newCheck("tRuE")
+		b := false
 
 		check.Query("tRuE").Bool(&b)
 
