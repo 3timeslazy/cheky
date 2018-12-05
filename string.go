@@ -4,66 +4,52 @@ import (
 	"fmt"
 )
 
-// StringChecker performs string values checks.
-type StringChecker interface {
-	Gt(i int) StringChecker
-	Ge(i int) StringChecker
-	Lt(i int) StringChecker
-	Le(i int) StringChecker
-	// OneOf(strs ...string) StringChecker
-	// NoOne(strs ...string) StringChecker
-	// Regexp(str string) StringChecker
+// String checks strings.
+type String struct {
+	checks pushCheck
+	val    string
 }
 
-type stringChecker struct {
-	errkp ErrorKeeper
-	val   *string
+// Gt checks if length of string greater than i.
+func (s String) Gt(i int) String {
+	s.checks(func() error {
+		if len(s.val) <= i {
+			return fmt.Errorf("length should be greater than %d", i)
+		}
+		return nil
+	})
+	return s
 }
 
-func (ch *stringChecker) Gt(i int) StringChecker {
-	if ch.errkp.Err() != nil {
-		return ch
-	}
-
-	l := len(*ch.val)
-	if l <= i {
-		ch.errkp.Keep(fmt.Errorf("length. expected > '%d', got '%d'", i, l))
-	}
-	return ch
+// Ge checks if length of string greater or equal to i.
+func (s String) Ge(i int) String {
+	s.checks(func() error {
+		if len(s.val) < i {
+			return fmt.Errorf("length should be greater or equal to %d", i)
+		}
+		return nil
+	})
+	return s
 }
 
-func (ch *stringChecker) Ge(i int) StringChecker {
-	if ch.errkp.Err() != nil {
-		return ch
-	}
-
-	l := len(*ch.val)
-	if l < i {
-		ch.errkp.Keep(fmt.Errorf("length. expected >= '%d', got '%d'", i, l))
-	}
-	return ch
+// Lt checks if length of string less than i.
+func (s String) Lt(i int) String {
+	s.checks(func() error {
+		if len(s.val) >= i {
+			return fmt.Errorf("length should be less than %d", i)
+		}
+		return nil
+	})
+	return s
 }
 
-func (ch *stringChecker) Lt(i int) StringChecker {
-	if ch.errkp.Err() != nil {
-		return ch
-	}
-
-	l := len(*ch.val)
-	if l >= i {
-		ch.errkp.Keep(fmt.Errorf("length. expected < '%d', got '%d'", i, l))
-	}
-	return ch
-}
-
-func (ch *stringChecker) Le(i int) StringChecker {
-	if ch.errkp.Err() != nil {
-		return ch
-	}
-
-	l := len(*ch.val)
-	if l > i {
-		ch.errkp.Keep(fmt.Errorf("length. expected <= '%d', got '%d'", i, l))
-	}
-	return ch
+// Le checks if length of string less or equal to i.
+func (s String) Le(i int) String {
+	s.checks(func() error {
+		if len(s.val) > i {
+			return fmt.Errorf("length should be less or equal to %d", i)
+		}
+		return nil
+	})
+	return s
 }
