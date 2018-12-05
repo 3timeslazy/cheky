@@ -123,4 +123,40 @@ func TestInt(t *testing.T) {
 		So(check.Err(), ShouldBeError)
 		So(i64, ShouldEqual, 0)
 	})
+
+	Convey("should be 1, 2 or 3", t, func() {
+		check := newCheck("3")
+		i := 0
+
+		check.Query("3").Int(&i).OneOf(1, 2, 3)
+		So(check.Err(), ShouldBeNil)
+		So(i, ShouldEqual, 3)
+	})
+
+	Convey("when not one of 1, 2 or 3", t, func() {
+		check := newCheck("4")
+		i := 0
+
+		check.Query("4").Int(&i).OneOf(1, 2, 3)
+		So(check.Err(), ShouldBeError)
+		So(i, ShouldEqual, 4)
+	})
+
+	Convey("should not be 1, 2 or 3", t, func() {
+		check := newCheck("4")
+		i := 0
+
+		check.Query("4").Int(&i).NoOne(1, 2, 3)
+		So(check.Err(), ShouldBeNil)
+		So(i, ShouldEqual, 4)
+	})
+
+	Convey("when one of 1, 2 or 3", t, func() {
+		check := newCheck("3")
+		i := 0
+
+		check.Query("3").Int(&i).NoOne(1, 2, 3)
+		So(check.Err(), ShouldBeError)
+		So(i, ShouldEqual, 3)
+	})
 }

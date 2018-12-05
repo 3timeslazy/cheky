@@ -1,9 +1,5 @@
 package cheky
 
-import (
-	"fmt"
-)
-
 // Int checks follow types:
 // - int
 // - int8
@@ -52,12 +48,7 @@ func (i Int) Le(other int64) Int {
 // OneOf checks if there are value among ones.
 func (i Int) OneOf(ones ...int64) Int {
 	i.checks(func() error {
-		for _, one := range ones {
-			if i.val == one {
-				return nil
-			}
-		}
-		return fmt.Errorf("value should be one of %v, got '%d'", ones, i.val)
+		return oneOf(i.val, ones)
 	})
 	return i
 }
@@ -65,12 +56,7 @@ func (i Int) OneOf(ones ...int64) Int {
 // NoOne checks if there are no value among ones.
 func (i Int) NoOne(ones ...int64) Int {
 	i.checks(func() error {
-		for _, one := range ones {
-			if i.val == one {
-				return fmt.Errorf("value should not be one of %v, got '%d'", ones, i.val)
-			}
-		}
-		return nil
+		return noOne(i.val, ones)
 	})
 	return i
 }
