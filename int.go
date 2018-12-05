@@ -18,13 +18,7 @@ type Int struct {
 // Gt checks if value greater than other.
 func (i Int) Gt(other int64) Int {
 	i.checks(func() error {
-		if i.val <= other {
-			return fmt.Errorf(
-				"value should be greater than '%d', got '%d'",
-				other, i.val,
-			)
-		}
-		return nil
+		return gt(i.val, other)
 	})
 	return i
 }
@@ -33,13 +27,7 @@ func (i Int) Gt(other int64) Int {
 // to other.
 func (i Int) Ge(other int64) Int {
 	i.checks(func() error {
-		if i.val < other {
-			return fmt.Errorf(
-				"value should be greater or equal to '%d', got '%d'",
-				other, i.val,
-			)
-		}
-		return nil
+		return ge(i.val, other)
 	})
 	return i
 }
@@ -47,13 +35,7 @@ func (i Int) Ge(other int64) Int {
 // Lt checks if value less than other.
 func (i Int) Lt(other int64) Int {
 	i.checks(func() error {
-		if i.val >= other {
-			return fmt.Errorf(
-				"value should be less than '%d', got '%d'",
-				other, i.val,
-			)
-		}
-		return nil
+		return lt(i.val, other)
 	})
 	return i
 }
@@ -62,13 +44,7 @@ func (i Int) Lt(other int64) Int {
 // to other.
 func (i Int) Le(other int64) Int {
 	i.checks(func() error {
-		if i.val > other {
-			return fmt.Errorf(
-				"value should be less or equal to '%d', got '%d'",
-				other, i.val,
-			)
-		}
-		return nil
+		return le(i.val, other)
 	})
 	return i
 }
