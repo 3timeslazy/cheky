@@ -53,3 +53,19 @@ func (s String) Le(i int) String {
 	})
 	return s
 }
+
+// OneOf checks if there are value among ones.
+func (s String) OneOf(ones ...string) String {
+	s.checks(func() error {
+		return oneOf(s.val, ones)
+	})
+	return s
+}
+
+// NoOne checks if there are no value among ones.
+func (s String) NoOne(ones ...string) String {
+	s.checks(func() error {
+		return noOne(s.val, ones)
+	})
+	return s
+}
