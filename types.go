@@ -153,6 +153,111 @@ func (types TypesChecker) Int64(dst *int64) Int {
 	}
 }
 
+// Uint returns Uint checker.
+func (types TypesChecker) Uint(dst *uint) Uint {
+	u, err := strconv.ParseUint(types.src, 10, 0)
+	if err != nil {
+		types.checks(func() error {
+			return fmt.Errorf(msgCantParse, types.src, *dst, err)
+		})
+		return Uint{
+			checks: func(c check) {},
+			val:    u,
+		}
+	}
+
+	*dst = uint(u)
+
+	return Uint{
+		checks: types.checks,
+		val:    u,
+	}
+}
+
+// Uint8 returns Int checker.
+func (types TypesChecker) Uint8(dst *uint8) Uint {
+	u, err := strconv.ParseUint(types.src, 10, 8)
+	if err != nil {
+		types.checks(func() error {
+			return fmt.Errorf(msgCantParse, types.src, *dst, err)
+		})
+		return Uint{
+			checks: func(c check) {},
+			val:    u,
+		}
+	}
+
+	*dst = uint8(u)
+
+	return Uint{
+		checks: types.checks,
+		val:    u,
+	}
+}
+
+// Uint16 returns Int checker.
+func (types TypesChecker) Uint16(dst *uint16) Uint {
+	u, err := strconv.ParseUint(types.src, 10, 16)
+	if err != nil {
+		types.checks(func() error {
+			return fmt.Errorf(msgCantParse, types.src, *dst, err)
+		})
+		return Uint{
+			checks: func(c check) {},
+			val:    u,
+		}
+	}
+
+	*dst = uint16(u)
+
+	return Uint{
+		checks: types.checks,
+		val:    u,
+	}
+}
+
+// Uint32 returns Int checker.
+func (types TypesChecker) Uint32(dst *uint32) Uint {
+	u, err := strconv.ParseUint(types.src, 10, 32)
+	if err != nil {
+		types.checks(func() error {
+			return fmt.Errorf(msgCantParse, types.src, *dst, err)
+		})
+		return Uint{
+			checks: func(c check) {},
+			val:    u,
+		}
+	}
+
+	*dst = uint32(u)
+
+	return Uint{
+		checks: types.checks,
+		val:    u,
+	}
+}
+
+// Uint64 returns Int checker.
+func (types TypesChecker) Uint64(dst *uint64) Uint {
+	u, err := strconv.ParseUint(types.src, 10, 64)
+	if err != nil {
+		types.checks(func() error {
+			return fmt.Errorf(msgCantParse, types.src, *dst, err)
+		})
+		return Uint{
+			checks: func(c check) {},
+			val:    u,
+		}
+	}
+
+	*dst = uint64(u)
+
+	return Uint{
+		checks: types.checks,
+		val:    u,
+	}
+}
+
 func parseBool(s string) (b bool, err error) {
 	switch strings.ToLower(s) {
 	case "true", "1":

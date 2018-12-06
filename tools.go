@@ -305,6 +305,41 @@ func enum(val, ones interface{}, oneOf bool) (err error) {
 		for _, one := range ones {
 			errUpd(val == one)
 		}
+	case []uint:
+		val := val.(uint)
+		for _, one := range ones {
+			errUpd(val == one)
+		}
+	case []uint8:
+		val := val.(uint8)
+		for _, one := range ones {
+			errUpd(val == one)
+		}
+	case []uint16:
+		val := val.(uint16)
+		for _, one := range ones {
+			errUpd(val == one)
+		}
+	case []uint32:
+		val := val.(uint32)
+		for _, one := range ones {
+			errUpd(val == one)
+		}
+	case []uint64:
+		val := val.(uint64)
+		for _, one := range ones {
+			errUpd(val == one)
+		}
+	case []float32:
+		val := val.(float32)
+		for _, one := range ones {
+			errUpd(val == one)
+		}
+	case []float64:
+		val := val.(float64)
+		for _, one := range ones {
+			errUpd(val == one)
+		}
 	}
 
 	return err
