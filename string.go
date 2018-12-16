@@ -2,6 +2,7 @@ package cheky
 
 import (
 	"fmt"
+	"regexp"
 )
 
 // String checks strings.
@@ -66,6 +67,21 @@ func (s String) OneOf(ones ...string) String {
 func (s String) NoOne(ones ...string) String {
 	s.checks(func() error {
 		return noOne(s.val, ones)
+	})
+	return s
+}
+
+// Regexp checks if value satisfies pattern.
+func (s String) Regexp(pattern string) String {
+	s.checks(func() error {
+		matched, err := regexp.Match(pattern, []byte(s.val))
+		if err != nil {
+			return fmt.Errorf("regexp: %v", err)
+		}
+		if !matched {
+			return fmt.Errorf("regexp: pattern not match")
+		}
+		return nil
 	})
 	return s
 }
