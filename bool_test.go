@@ -63,6 +63,16 @@ func TestBool(t *testing.T) {
 		So(b, ShouldBeTrue)
 	})
 
+	Convey("param=false, but need true", t, func() {
+		check := newCheck("false")
+		b := false
+
+		check.Query("true").Bool(&b).True()
+
+		So(check.Err(), ShouldBeError)
+		So(b, ShouldBeFalse)
+	})
+
 	Convey("param=1", t, func() {
 		check := newCheck("1")
 		b := false
