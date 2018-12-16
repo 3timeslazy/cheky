@@ -1,3 +1,12 @@
+<p align="center">
+	<a href="https://travis-ci.com/3timeslazy/cheky">
+		<img alt="Build Status" src="https://travis-ci.com/3timeslazy/cheky.svg?branch=master">
+	</a>
+  <a href="https://codecov.io/gh/3timeslazy/cheky">
+		<img src="https://codecov.io/gh/3timeslazy/cheky/branch/master/graph/badge.svg" />
+	</a>
+</p>
+
 ## Doc
 https://godoc.org/github.com/3timeslazy/cheky
 
