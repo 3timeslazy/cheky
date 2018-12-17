@@ -2,8 +2,11 @@
 	<a href="https://travis-ci.com/3timeslazy/cheky">
 		<img alt="Build Status" src="https://travis-ci.com/3timeslazy/cheky.svg?branch=master">
 	</a>
-  <a href="https://codecov.io/gh/3timeslazy/cheky">
+  	<a href="https://codecov.io/gh/3timeslazy/cheky">
 		<img src="https://codecov.io/gh/3timeslazy/cheky/branch/master/graph/badge.svg" />
+	</a>
+	<a href="https://godoc.org/github.com/3timeslazy/cheky">
+		<img src="https://godoc.org/github.com/3timeslazy/cheky?status.svg" alt="GoDoc">
 	</a>
 </p>
 
@@ -86,6 +89,3 @@ func HandlerFunc(ctx framework.Context) (err error) {
 ```sh
 go get github.com/3timeslazy/cheky
 ```
-
-## Doc
-https://godoc.org/github.com/3timeslazy/cheky
