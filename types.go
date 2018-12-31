@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
@@ -195,7 +196,7 @@ func (types TypesChecker) Uint8(dst *uint8) Uint {
 	}
 }
 
-// Uint16 returns Int checker.
+// Uint16 returns Uint checker.
 func (types TypesChecker) Uint16(dst *uint16) Uint {
 	u, err := strconv.ParseUint(types.src, 10, 16)
 	if err != nil {
@@ -216,7 +217,7 @@ func (types TypesChecker) Uint16(dst *uint16) Uint {
 	}
 }
 
-// Uint32 returns Int checker.
+// Uint32 returns Uint checker.
 func (types TypesChecker) Uint32(dst *uint32) Uint {
 	u, err := strconv.ParseUint(types.src, 10, 32)
 	if err != nil {
@@ -237,7 +238,7 @@ func (types TypesChecker) Uint32(dst *uint32) Uint {
 	}
 }
 
-// Uint64 returns Int checker.
+// Uint64 returns Uint checker.
 func (types TypesChecker) Uint64(dst *uint64) Uint {
 	u, err := strconv.ParseUint(types.src, 10, 64)
 	if err != nil {
@@ -255,6 +256,27 @@ func (types TypesChecker) Uint64(dst *uint64) Uint {
 	return Uint{
 		checks: types.checks,
 		val:    u,
+	}
+}
+
+// Duration returns Duration checker.
+func (types TypesChecker) Duration(dst *time.Duration) Duration {
+	d, err := time.ParseDuration(types.src)
+	if err != nil {
+		types.checks(func() error {
+			return fmt.Errorf(msgCantParse, types.src, *dst, err)
+		})
+		return Duration{
+			checks: func(c check) {},
+			val:    d,
+		}
+	}
+
+	*dst = d
+
+	return Duration{
+		checks: types.checks,
+		val:    d,
 	}
 }
 

@@ -2,6 +2,7 @@ package cheky
 
 import (
 	"fmt"
+	"time"
 )
 
 func gt(val, other interface{}) (err error) {
@@ -57,6 +58,10 @@ func gt(val, other interface{}) (err error) {
 		}
 	case float64:
 		if v > other.(float64) {
+			err = nil
+		}
+	case time.Duration:
+		if v > other.(time.Duration) {
 			err = nil
 		}
 	}
@@ -119,6 +124,10 @@ func ge(val, other interface{}) (err error) {
 		if v >= other.(float64) {
 			err = nil
 		}
+	case time.Duration:
+		if v >= other.(time.Duration) {
+			err = nil
+		}
 	}
 
 	return err
@@ -179,6 +188,10 @@ func lt(val, other interface{}) (err error) {
 		if v < other.(float64) {
 			err = nil
 		}
+	case time.Duration:
+		if v < other.(time.Duration) {
+			err = nil
+		}
 	}
 
 	return
@@ -237,6 +250,10 @@ func le(val, other interface{}) (err error) {
 		}
 	case float64:
 		if v <= other.(float64) {
+			err = nil
+		}
+	case time.Duration:
+		if v <= other.(time.Duration) {
 			err = nil
 		}
 	}
@@ -337,6 +354,11 @@ func enum(val, ones interface{}, oneOf bool) (err error) {
 		}
 	case []float64:
 		val := val.(float64)
+		for _, one := range ones {
+			errUpd(val == one)
+		}
+	case []time.Duration:
+		val := val.(time.Duration)
 		for _, one := range ones {
 			errUpd(val == one)
 		}
