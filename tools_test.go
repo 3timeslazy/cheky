@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+	"time"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -74,6 +75,14 @@ func TestGtGeLtLe(t *testing.T) {
 			Less: float64(1),
 			More: float64(2),
 			Both: []float64{1, 2},
+		},
+		TestCase{
+			Less: time.Duration(1),
+			More: time.Duration(2),
+			Both: []time.Duration{
+				time.Duration(1),
+				time.Duration(2),
+			},
 		},
 	}
 
