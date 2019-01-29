@@ -18,7 +18,7 @@ func TestChecker(t *testing.T) {
 		check.Query("query").Str(&query).OneOf("query").Ge(4)
 
 		So(check.Err(), ShouldBeError)
-		So(path, ShouldEqual, "path")
-		So(query, ShouldEqual, "query")
+		So(path, ShouldEqual, "")
+		So(query, ShouldEqual, "")
 	})
 }

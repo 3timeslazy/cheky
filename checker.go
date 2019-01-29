@@ -1,40 +1,42 @@
 package cheky
 
-import (
-	"fmt"
-)
-
 // Checker implements Query/Path step of
 // the interface of library.
 type Checker struct {
-	ctx   Context
-	path  map[string][]check
-	query map[string][]check
+	ctx    Context
+	params []Param
+}
+
+// Param represents any object
+// that can be validated.
+type Param interface {
+	Validate() error
 }
 
 // check wraps functions, that
 // check values.
 type check func() error
 
-// pushCheck pushes c into root Checker.
-type pushCheck func(c check)
-
 // Query returns TypesChecker that checks query params.
-func (chr Checker) Query(name string) TypesChecker {
+func (chr *Checker) Query(name string) TypesChecker {
 	return TypesChecker{
+		name:  name,
+		where: "query",
+
 		src: chr.ctx.Query(name),
-		checks: func(c check) {
-			chr.query[name] = append(chr.query[name], c)
+
+		storeParam: func(p Param) {
+			chr.params = append(chr.params, p)
 		},
 	}
 }
 
 // Path returns TypesChecker that checks path params.
-func (chr Checker) Path(name string) TypesChecker {
+func (chr *Checker) Path(name string) TypesChecker {
 	return TypesChecker{
 		src: chr.ctx.Path(name),
-		checks: func(c check) {
-			chr.path[name] = append(chr.path[name], c)
+		storeParam: func(p Param) {
+			chr.params = append(chr.params, p)
 		},
 	}
 }
@@ -44,18 +46,11 @@ func (chr Checker) Path(name string) TypesChecker {
 func (chr Checker) Err() error {
 	var err error
 
-	for param, chks := range chr.path {
-		for _, chk := range chks {
-			if err = chk(); err != nil {
-				return fmt.Errorf("path '%s': %v", param, err)
-			}
-		}
-	}
-
-	for param, chks := range chr.query {
-		for _, chk := range chks {
-			if err = chk(); err != nil {
-				return fmt.Errorf("query '%s': %v", param, err)
+	if chr.params != nil {
+		for _, param := range chr.params {
+			err = param.Validate()
+			if err != nil {
+				return err
 			}
 		}
 	}

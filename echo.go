@@ -20,6 +20,6 @@ func (e echo) Path(name string) string {
 
 // Echo creates Checker which extracts
 // parameters from the context of labstack's Context.
-func Echo(ctx EchoContext) Checker {
+func Echo(ctx EchoContext) *Checker {
 	return Ctx(echo{ctx})
 }

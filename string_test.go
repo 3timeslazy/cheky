@@ -22,7 +22,7 @@ func TestString(t *testing.T) {
 
 		check.Query("qwerty").Str(&s).Ge(7)
 		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "qwerty")
+		So(s, ShouldEqual, "")
 	})
 
 	Convey("param=qwerty", t, func() {
@@ -40,7 +40,7 @@ func TestString(t *testing.T) {
 
 		check.Query("qwerty").Str(&s).Gt(6)
 		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "qwerty")
+		So(s, ShouldEqual, "")
 	})
 
 	Convey("param=qwerty", t, func() {
@@ -58,7 +58,7 @@ func TestString(t *testing.T) {
 
 		check.Query("qwerty").Str(&s).Le(5)
 		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "qwerty")
+		So(s, ShouldEqual, "")
 	})
 
 	Convey("param=qwerty", t, func() {
@@ -76,7 +76,7 @@ func TestString(t *testing.T) {
 
 		check.Query("qwerty").Str(&s).Lt(6)
 		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "qwerty")
+		So(s, ShouldEqual, "")
 	})
 
 	Convey("should be one of 'a', 'b'", t, func() {
@@ -94,7 +94,7 @@ func TestString(t *testing.T) {
 
 		check.Query("c").Str(&s).OneOf("a", "b")
 		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "c")
+		So(s, ShouldEqual, "")
 	})
 
 	Convey("should not be 'a' or 'b'", t, func() {
@@ -112,7 +112,7 @@ func TestString(t *testing.T) {
 
 		check.Query("a").Str(&s).NoOne("a", "b")
 		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "a")
+		So(s, ShouldEqual, "")
 	})
 
 	Convey("should satisfies pattern", t, func() {
@@ -130,7 +130,7 @@ func TestString(t *testing.T) {
 
 		check.Query("hello").Str(&s).Regexp("^[0-9]$")
 		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "Hello, World!")
+		So(s, ShouldEqual, "")
 	})
 
 	Convey("invalid pattern", t, func() {
@@ -139,6 +139,24 @@ func TestString(t *testing.T) {
 
 		check.Query("hello").Str(&s).Regexp("[0-9")
 		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "Hello, World!")
+		So(s, ShouldEqual, "")
+	})
+
+	Convey("default when there is no error", t, func() {
+		check := newCheck("abc")
+		s := ""
+
+		check.Query("hello").Str(&s).OneOf("abc").Default("cba")
+		So(check.Err(), ShouldBeNil)
+		So(s, ShouldEqual, "abc")
+	})
+
+	Convey("default when there is error", t, func() {
+		check := newCheck("a")
+		s := ""
+
+		check.Query("hello").Str(&s).OneOf("abc").Default("cba")
+		So(check.Err(), ShouldBeNil)
+		So(s, ShouldEqual, "cba")
 	})
 }

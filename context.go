@@ -7,10 +7,9 @@ type Context interface {
 }
 
 // Ctx returns new Checker from a given Context.
-func Ctx(ctx Context) Checker {
-	return Checker{
-		ctx:   ctx,
-		path:  map[string][]check{},
-		query: map[string][]check{},
+func Ctx(ctx Context) *Checker {
+	return &Checker{
+		ctx:    ctx,
+		params: []Param{},
 	}
 }
