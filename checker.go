@@ -22,9 +22,7 @@ func (chr *Checker) Query(name string) TypesChecker {
 	return TypesChecker{
 		name:  name,
 		where: "query",
-
-		src: chr.ctx.Query(name),
-
+		src:   chr.ctx.Query(name),
 		storeParam: func(p Param) {
 			chr.params = append(chr.params, p)
 		},
@@ -34,7 +32,9 @@ func (chr *Checker) Query(name string) TypesChecker {
 // Path returns TypesChecker that checks path params.
 func (chr *Checker) Path(name string) TypesChecker {
 	return TypesChecker{
-		src: chr.ctx.Path(name),
+		name:  name,
+		where: "path",
+		src:   chr.ctx.Path(name),
 		storeParam: func(p Param) {
 			chr.params = append(chr.params, p)
 		},
