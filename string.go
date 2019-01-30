@@ -109,7 +109,7 @@ func (s *String) Validate() error {
 		err = check()
 		if err != nil {
 			if s.defaultVal == nil {
-				return fmt.Errorf("%s '%s': %v", s.name, s.where, err)
+				return fmt.Errorf("%s '%s': %v", s.where, s.name, err)
 			}
 
 			*s.src = *s.defaultVal
