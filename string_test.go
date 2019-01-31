@@ -7,138 +7,186 @@ import (
 )
 
 func TestString(t *testing.T) {
-	Convey("param=qwerty", t, func() {
-		check := newCheck("qwerty")
-		s := ""
+	tcs := []*StringTC{
+		&StringTC{
+			Desc:           "len('qwerty') Ge 6",
+			ValidatedValue: "qwerty",
+			ExpectedAs:     "qwerty",
+			AfterMethods: map[string][]interface{}{
+				"Ge": args(6),
+			},
+			Error: ShouldBeNil,
+		},
+		&StringTC{
+			Desc:           "len('qwerty') Ge 7",
+			ValidatedValue: "qwerty",
+			ExpectedAs:     "",
+			AfterMethods: map[string][]interface{}{
+				"Ge": args(7),
+			},
+			Error: ShouldBeError,
+		},
+		&StringTC{
+			Desc:           "len('qwerty') Gt 5",
+			ValidatedValue: "qwerty",
+			ExpectedAs:     "qwerty",
+			AfterMethods: map[string][]interface{}{
+				"Gt": args(5),
+			},
+			Error: ShouldBeNil,
+		},
+		&StringTC{
+			Desc:           "len('qwerty') Gt 6",
+			ValidatedValue: "qwerty",
+			ExpectedAs:     "",
+			AfterMethods: map[string][]interface{}{
+				"Gt": args(6),
+			},
+			Error: ShouldBeError,
+		},
+		&StringTC{
+			Desc:           "len('qwerty') Le 6",
+			ValidatedValue: "qwerty",
+			ExpectedAs:     "qwerty",
+			AfterMethods: map[string][]interface{}{
+				"Le": args(6),
+			},
+			Error: ShouldBeNil,
+		},
+		&StringTC{
+			Desc:           "len('qwerty') Le 5",
+			ValidatedValue: "qwerty",
+			ExpectedAs:     "",
+			AfterMethods: map[string][]interface{}{
+				"Le": args(5),
+			},
+			Error: ShouldBeError,
+		},
+		&StringTC{
+			Desc:           "len('qwerty') Lt 8",
+			ValidatedValue: "qwerty",
+			ExpectedAs:     "qwerty",
+			AfterMethods: map[string][]interface{}{
+				"Lt": args(8),
+			},
+			Error: ShouldBeNil,
+		},
+		&StringTC{
+			Desc:           "len('qwerty') Lt 6",
+			ValidatedValue: "qwerty",
+			ExpectedAs:     "",
+			AfterMethods: map[string][]interface{}{
+				"Lt": args(6),
+			},
+			Error: ShouldBeError,
+		},
+		&StringTC{
+			Desc:           "should be one of 'a', 'b'",
+			ValidatedValue: "a",
+			ExpectedAs:     "a",
+			AfterMethods: map[string][]interface{}{
+				"OneOf": args("a", "b"),
+			},
+			Error: ShouldBeNil,
+		},
+		&StringTC{
+			Desc:           "should be one of 'a', 'b', but got 'c'",
+			ValidatedValue: "c",
+			ExpectedAs:     "",
+			AfterMethods: map[string][]interface{}{
+				"OneOf": args("a", "b"),
+			},
+			Error: ShouldBeError,
+		},
+		&StringTC{
+			Desc:           "should not be 'a' or 'b'",
+			ValidatedValue: "c",
+			ExpectedAs:     "c",
+			AfterMethods: map[string][]interface{}{
+				"NoOne": args("a", "b"),
+			},
+			Error: ShouldBeNil,
+		},
+		&StringTC{
+			Desc:           "should not be 'a' or 'b', but got 'a'",
+			ValidatedValue: "a",
+			ExpectedAs:     "",
+			AfterMethods: map[string][]interface{}{
+				"NoOne": args("a", "b"),
+			},
+			Error: ShouldBeError,
+		},
+		&StringTC{
+			Desc:           "'Hello, World!' not satisfies '^[0-9]$'",
+			ValidatedValue: "Hello, World!",
+			ExpectedAs:     "",
+			AfterMethods: map[string][]interface{}{
+				"Regexp": args("^[0-9]$"),
+			},
+			Error: ShouldBeError,
+		},
+		&StringTC{
+			Desc:           "invalid regexp pattern",
+			ValidatedValue: "Hello, World!",
+			ExpectedAs:     "",
+			AfterMethods: map[string][]interface{}{
+				"Regexp": args("^[0-9"),
+			},
+			Error: ShouldBeError,
+		},
+		&StringTC{
+			Desc:           "'Hello, World!' satisfies '^Hello, .+!$'",
+			ValidatedValue: "Hello, World!",
+			ExpectedAs:     "Hello, World!",
+			AfterMethods: map[string][]interface{}{
+				"Regexp": args("^Hello, .+!$"),
+			},
+			Error: ShouldBeNil,
+		},
+		&StringTC{
+			Desc:           "default when there is no error",
+			ValidatedValue: "abc",
+			ExpectedAs:     "abc",
+			AfterMethods: map[string][]interface{}{
+				"OneOf":   args("abc"),
+				"Default": args("cba"),
+			},
+			Error: ShouldBeNil,
+		},
+		&StringTC{
+			Desc:           "default when there is error",
+			ValidatedValue: "a",
+			ExpectedAs:     "cba",
+			AfterMethods: map[string][]interface{}{
+				"OneOf":   args("abc"),
+				"Default": args("cba"),
+			},
+			Error: ShouldBeNil,
+		},
+	}
 
-		check.Query("qwerty").Str(&s).Ge(6)
-		So(check.Err(), ShouldBeNil)
-		So(s, ShouldEqual, "qwerty")
-	})
+	for _, tc := range tcs {
+		tc.Do(t)
+	}
+}
 
-	Convey("param=qwerty", t, func() {
-		check := newCheck("qwerty")
-		s := ""
+type StringTC struct {
+	Desc           string
+	ValidatedValue string
+	ExpectedAs     string
+	AfterMethods   map[string][]interface{}
+	Error          func(interface{}, ...interface{}) string
+}
 
-		check.Query("qwerty").Str(&s).Ge(7)
-		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "qwerty")
-	})
+func (tc *StringTC) Do(t *testing.T) {
+	Convey(tc.Desc, t, func() {
+		var check = newCheck(tc.ValidatedValue)
+		var s string
+		var v = check.Query(tc.ValidatedValue).Str(&s)
 
-	Convey("param=qwerty", t, func() {
-		check := newCheck("qwerty")
-		s := ""
+		runMethods(v, tc.AfterMethods)
 
-		check.Query("qwerty").Str(&s).Gt(5)
-		So(check.Err(), ShouldBeNil)
-		So(s, ShouldEqual, "qwerty")
-	})
-
-	Convey("param=qwerty", t, func() {
-		check := newCheck("qwerty")
-		s := ""
-
-		check.Query("qwerty").Str(&s).Gt(6)
-		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "qwerty")
-	})
-
-	Convey("param=qwerty", t, func() {
-		check := newCheck("qwerty")
-		s := ""
-
-		check.Query("qwerty").Str(&s).Le(6)
-		So(check.Err(), ShouldBeNil)
-		So(s, ShouldEqual, "qwerty")
-	})
-
-	Convey("param=qwerty", t, func() {
-		check := newCheck("qwerty")
-		s := ""
-
-		check.Query("qwerty").Str(&s).Le(5)
-		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "qwerty")
-	})
-
-	Convey("param=qwerty", t, func() {
-		check := newCheck("qwerty")
-		s := ""
-
-		check.Query("qwerty").Str(&s).Lt(8)
-		So(check.Err(), ShouldBeNil)
-		So(s, ShouldEqual, "qwerty")
-	})
-
-	Convey("param=qwerty", t, func() {
-		check := newCheck("qwerty")
-		s := ""
-
-		check.Query("qwerty").Str(&s).Lt(6)
-		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "qwerty")
-	})
-
-	Convey("should be one of 'a', 'b'", t, func() {
-		check := newCheck("a")
-		s := ""
-
-		check.Query("a").Str(&s).OneOf("a", "b")
-		So(check.Err(), ShouldBeNil)
-		So(s, ShouldEqual, "a")
-	})
-
-	Convey("should be one of 'a', 'b', but got 'c'", t, func() {
-		check := newCheck("c")
-		s := ""
-
-		check.Query("c").Str(&s).OneOf("a", "b")
-		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "c")
-	})
-
-	Convey("should not be 'a' or 'b'", t, func() {
-		check := newCheck("c")
-		s := ""
-
-		check.Query("c").Str(&s).NoOne("a", "b")
-		So(check.Err(), ShouldBeNil)
-		So(s, ShouldEqual, "c")
-	})
-
-	Convey("should not be 'a' or 'b', but got 'a'", t, func() {
-		check := newCheck("a")
-		s := ""
-
-		check.Query("a").Str(&s).NoOne("a", "b")
-		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "a")
-	})
-
-	Convey("should satisfies pattern", t, func() {
-		check := newCheck("Hello, World!")
-		s := ""
-
-		check.Query("hello").Str(&s).Regexp("^Hello, .+!$")
-		So(check.Err(), ShouldBeNil)
-		So(s, ShouldEqual, "Hello, World!")
-	})
-
-	Convey("should not satisfies pattern", t, func() {
-		check := newCheck("Hello, World!")
-		s := ""
-
-		check.Query("hello").Str(&s).Regexp("^[0-9]$")
-		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "Hello, World!")
-	})
-
-	Convey("invalid pattern", t, func() {
-		check := newCheck("Hello, World!")
-		s := ""
-
-		check.Query("hello").Str(&s).Regexp("[0-9")
-		So(check.Err(), ShouldBeError)
-		So(s, ShouldEqual, "Hello, World!")
+		So(check.Err(), tc.Error)
+		So(s, ShouldEqual, tc.ExpectedAs)
 	})
 }

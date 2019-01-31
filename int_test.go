@@ -3,160 +3,166 @@ package cheky_test
 import (
 	"testing"
 
-	"github.com/3timeslazy/cheky"
-
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func newCheck(param string) cheky.Checker {
-	return cheky.Ctx(NewContext(param, "any"))
+func TestInt(t *testing.T) {
+	tcs := []*IntTC{
+		&IntTC{
+			Desc:           "parse '10' into 10",
+			ValidatedValue: "10",
+			ExpectedAs:     10,
+			AfterMethods:   nil,
+			Error:          ShouldBeNil,
+		},
+		&IntTC{
+			Desc:           "parse '-8' into -8",
+			ValidatedValue: "-8",
+			ExpectedAs:     -8,
+			AfterMethods:   nil,
+			Error:          ShouldBeNil,
+		},
+		&IntTC{
+			Desc:           "11 Gt 10",
+			ValidatedValue: "11",
+			ExpectedAs:     11,
+			AfterMethods: map[string][]interface{}{
+				"Gt": args(10),
+			},
+			Error: ShouldBeNil,
+		},
+		&IntTC{
+			Desc:           "10 Ge 10",
+			ValidatedValue: "10",
+			ExpectedAs:     10,
+			AfterMethods: map[string][]interface{}{
+				"Ge": args(10),
+			},
+			Error: ShouldBeNil,
+		},
+		&IntTC{
+			Desc:           "8 Lt 10",
+			ValidatedValue: "8",
+			ExpectedAs:     8,
+			AfterMethods: map[string][]interface{}{
+				"Lt": args(10),
+			},
+			Error: ShouldBeNil,
+		},
+		&IntTC{
+			Desc:           "10 Le 10",
+			ValidatedValue: "10",
+			ExpectedAs:     10,
+			AfterMethods: map[string][]interface{}{
+				"Le": args(10),
+			},
+			Error: ShouldBeNil,
+		},
+		&IntTC{
+			Desc:           "6 Gt 10",
+			ValidatedValue: "6",
+			ExpectedAs:     0,
+			AfterMethods: map[string][]interface{}{
+				"Gt": args(10),
+			},
+			Error: ShouldBeError,
+		},
+		&IntTC{
+			Desc:           "10 Gt 10",
+			ValidatedValue: "10",
+			ExpectedAs:     0,
+			AfterMethods: map[string][]interface{}{
+				"Gt": args(10),
+			},
+			Error: ShouldBeError,
+		},
+		&IntTC{
+			Desc:           "parse 'nan'",
+			ValidatedValue: "nan",
+			ExpectedAs:     0,
+			AfterMethods:   nil,
+			Error:          ShouldBeError,
+		},
+		&IntTC{
+			Desc:           "should be 1, 2 or 3",
+			ValidatedValue: "3",
+			ExpectedAs:     3,
+			AfterMethods: map[string][]interface{}{
+				"OneOf": args(1, 2, 3),
+			},
+			Error: ShouldBeNil,
+		},
+		&IntTC{
+			Desc:           "when not one of 1, 2 or 3",
+			ValidatedValue: "4",
+			ExpectedAs:     0,
+			AfterMethods: map[string][]interface{}{
+				"OneOf": args(1, 2, 3),
+			},
+			Error: ShouldBeError,
+		},
+		&IntTC{
+			Desc:           "should not be 1, 2 or 3",
+			ValidatedValue: "4",
+			ExpectedAs:     4,
+			AfterMethods: map[string][]interface{}{
+				"NoOne": args(1, 2, 3),
+			},
+			Error: ShouldBeNil,
+		},
+		&IntTC{
+			Desc:           "when one of 1, 2 or 3",
+			ValidatedValue: "3",
+			ExpectedAs:     0,
+			AfterMethods: map[string][]interface{}{
+				"NoOne": args(1, 2, 3),
+			},
+			Error: ShouldBeError,
+		},
+		&IntTC{
+			Desc:           "default when error",
+			ValidatedValue: "3",
+			ExpectedAs:     13,
+			AfterMethods: map[string][]interface{}{
+				"NoOne":   args(1, 2, 3),
+				"Default": args(13),
+			},
+			Error: ShouldBeNil,
+		},
+		&IntTC{
+			Desc:           "default when no error",
+			ValidatedValue: "3",
+			ExpectedAs:     3,
+			AfterMethods: map[string][]interface{}{
+				"OneOf":   args(1, 2, 3),
+				"Default": args(13),
+			},
+			Error: ShouldBeNil,
+		},
+	}
+
+	for _, tc := range tcs {
+		tc.Do(t)
+	}
 }
 
-func TestInt(t *testing.T) {
-	Convey("param=10", t, func() {
-		check := newCheck("10")
-		i := 0
+type IntTC struct {
+	Desc           string
+	ValidatedValue string
+	ExpectedAs     int
+	AfterMethods   map[string][]interface{}
+	Error          func(interface{}, ...interface{}) string
+}
 
-		check.Query("10").Int(&i)
-		So(check.Err(), ShouldBeNil)
-		So(i, ShouldEqual, 10)
-	})
+func (tc *IntTC) Do(t *testing.T) {
+	Convey(tc.Desc, t, func() {
+		var check = newCheck(tc.ValidatedValue)
+		var i int
+		var v = check.Query(tc.ValidatedValue).Int(&i)
 
-	Convey("param=-8", t, func() {
-		check := newCheck("-8")
-		i := 0
+		runMethods(v, tc.AfterMethods)
 
-		check.Query("-8").Int(&i)
-		So(check.Err(), ShouldBeNil)
-		So(i, ShouldEqual, -8)
-	})
-
-	Convey("should be greater than 10", t, func() {
-		check := newCheck("11")
-		i := 0
-
-		check.Query("11").Int(&i).Gt(10)
-		So(check.Err(), ShouldBeNil)
-		So(i, ShouldEqual, 11)
-	})
-
-	Convey("should be greater or equal to 10", t, func() {
-		check := newCheck("10")
-		i := 0
-
-		check.Query("10").Int(&i).Ge(10)
-		So(check.Err(), ShouldBeNil)
-		So(i, ShouldEqual, 10)
-	})
-
-	Convey("should be less than 10", t, func() {
-		check := newCheck("8")
-		i := 0
-
-		check.Query("8").Int(&i).Lt(10)
-		So(check.Err(), ShouldBeNil)
-		So(i, ShouldEqual, 8)
-	})
-
-	Convey("should be less or equal to 10", t, func() {
-		check := newCheck("10")
-		i := 0
-
-		check.Query("10").Int(&i).Le(10)
-		So(check.Err(), ShouldBeNil)
-		So(i, ShouldEqual, 10)
-	})
-
-	Convey("should be greater than 10, but got less", t, func() {
-		check := newCheck("6")
-		i := 0
-
-		check.Query("6").Int(&i).Gt(10)
-		So(check.Err(), ShouldBeError)
-		So(i, ShouldEqual, 6)
-	})
-
-	Convey("should be greater than 10, but got 10", t, func() {
-		check := newCheck("10")
-		i := 0
-
-		check.Query("10").Int(&i).Gt(10)
-		So(check.Err(), ShouldBeError)
-		So(i, ShouldEqual, 10)
-	})
-
-	Convey("param=nan", t, func() {
-		check := newCheck("nan")
-		i := 0
-
-		check.Query("nan").Int(&i)
-		So(check.Err(), ShouldBeError)
-		So(i, ShouldEqual, 0)
-	})
-
-	Convey("overflow ints", t, func() {
-		check := newCheck("128")
-		i8 := int8(0)
-
-		check.Query("128").Int8(&i8)
-		So(check.Err(), ShouldBeError)
-		So(i8, ShouldEqual, 0)
-
-		check = newCheck("32768")
-		i16 := int16(0)
-
-		check.Query("32768").Int16(&i16)
-		So(check.Err(), ShouldBeError)
-		So(i16, ShouldEqual, 0)
-
-		check = newCheck("2147483648")
-		i32 := int32(0)
-
-		check.Query("2147483648").Int32(&i32)
-		So(check.Err(), ShouldBeError)
-		So(i32, ShouldEqual, 0)
-
-		check = newCheck("9223372036854775808")
-		i64 := int64(0)
-
-		check.Query("9223372036854775808").Int64(&i64)
-		So(check.Err(), ShouldBeError)
-		So(i64, ShouldEqual, 0)
-	})
-
-	Convey("should be 1, 2 or 3", t, func() {
-		check := newCheck("3")
-		i := 0
-
-		check.Query("3").Int(&i).OneOf(1, 2, 3)
-		So(check.Err(), ShouldBeNil)
-		So(i, ShouldEqual, 3)
-	})
-
-	Convey("when not one of 1, 2 or 3", t, func() {
-		check := newCheck("4")
-		i := 0
-
-		check.Query("4").Int(&i).OneOf(1, 2, 3)
-		So(check.Err(), ShouldBeError)
-		So(i, ShouldEqual, 4)
-	})
-
-	Convey("should not be 1, 2 or 3", t, func() {
-		check := newCheck("4")
-		i := 0
-
-		check.Query("4").Int(&i).NoOne(1, 2, 3)
-		So(check.Err(), ShouldBeNil)
-		So(i, ShouldEqual, 4)
-	})
-
-	Convey("when one of 1, 2 or 3", t, func() {
-		check := newCheck("3")
-		i := 0
-
-		check.Query("3").Int(&i).NoOne(1, 2, 3)
-		So(check.Err(), ShouldBeError)
-		So(i, ShouldEqual, 3)
+		So(check.Err(), tc.Error)
+		So(i, ShouldEqual, tc.ExpectedAs)
 	})
 }
