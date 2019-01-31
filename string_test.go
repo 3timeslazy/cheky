@@ -1,46 +1,10 @@
 package cheky_test
 
 import (
-	"reflect"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
-
-type StringTC struct {
-	Desc           string
-	ValidatedValue string
-	ExpectedAs     string
-	AfterMethods   map[string][]interface{}
-	Error          func(interface{}, ...interface{}) string
-}
-
-func (tc *StringTC) Do(t *testing.T) {
-	Convey(tc.Desc, t, func() {
-		check := newCheck(tc.ValidatedValue)
-		s := ""
-
-		validator := check.Query(tc.ValidatedValue).Str(&s)
-		currVal := reflect.ValueOf(validator)
-
-		for method, args := range tc.AfterMethods {
-			in := make([]reflect.Value, len(args))
-
-			for i, arg := range args {
-				in[i] = reflect.ValueOf(arg)
-			}
-
-			currVal = currVal.MethodByName(method).Call(in)[0]
-		}
-
-		So(check.Err(), tc.Error)
-		So(s, ShouldEqual, tc.ExpectedAs)
-	})
-}
-
-func args(args ...interface{}) []interface{} {
-	return args
-}
 
 func TestString(t *testing.T) {
 	tcs := []*StringTC{
@@ -204,4 +168,25 @@ func TestString(t *testing.T) {
 	for _, tc := range tcs {
 		tc.Do(t)
 	}
+}
+
+type StringTC struct {
+	Desc           string
+	ValidatedValue string
+	ExpectedAs     string
+	AfterMethods   map[string][]interface{}
+	Error          func(interface{}, ...interface{}) string
+}
+
+func (tc *StringTC) Do(t *testing.T) {
+	Convey(tc.Desc, t, func() {
+		var check = newCheck(tc.ValidatedValue)
+		var s string
+		var v = check.Query(tc.ValidatedValue).Str(&s)
+
+		runMethods(v, tc.AfterMethods)
+
+		So(check.Err(), tc.Error)
+		So(s, ShouldEqual, tc.ExpectedAs)
+	})
 }
