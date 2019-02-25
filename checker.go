@@ -7,9 +7,11 @@ import (
 // Checker implements Query/Path step of
 // the interface of library.
 type Checker struct {
-	ctx   Context
-	path  map[string][]check
-	query map[string][]check
+	ctx Context
+
+	path   map[string][]check
+	query  map[string][]check
+	values map[string][]check
 }
 
 // check wraps functions, that
@@ -39,6 +41,16 @@ func (chr Checker) Path(name string) TypesChecker {
 	}
 }
 
+// Value returns TypesChecker that checks v.
+func (chr Checker) Value(v string) TypesChecker {
+	return TypesChecker{
+		src: v,
+		checks: func(c check) {
+			chr.values[v] = append(chr.values[v], c)
+		},
+	}
+}
+
 // Err run all checks and return error
 // if exists.
 func (chr Checker) Err() error {
@@ -56,6 +68,14 @@ func (chr Checker) Err() error {
 		for _, chk := range chks {
 			if err = chk(); err != nil {
 				return fmt.Errorf("query '%s': %v", param, err)
+			}
+		}
+	}
+
+	for param, chks := range chr.values {
+		for _, chk := range chks {
+			if err = chk(); err != nil {
+				return fmt.Errorf("value '%s': %v", param, err)
 			}
 		}
 	}

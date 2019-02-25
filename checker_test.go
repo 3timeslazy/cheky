@@ -21,4 +21,20 @@ func TestChecker(t *testing.T) {
 		So(path, ShouldEqual, "path")
 		So(query, ShouldEqual, "query")
 	})
+
+	Convey("validate values", t, func() {
+		var check = cheky.WithoutCtx()
+		var i int
+		var i8 int8
+
+		check.Value("123").Int(&i).Gt(122)
+
+		So(check.Err(), ShouldBeNil)
+		So(i, ShouldEqual, 123)
+
+		check.Value("1000").Int8(&i8)
+
+		So(check.Err(), ShouldBeError)
+		So(i8, ShouldEqual, 0)
+	})
 }
