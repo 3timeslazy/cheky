@@ -13,7 +13,7 @@ type Bool struct {
 // True checks if value is true.
 func (b Bool) True() Bool {
 	b.checks(func() error {
-		if b.val != true {
+		if !b.val {
 			return fmt.Errorf("expected 'true', got 'false'")
 		}
 		return nil
@@ -24,7 +24,7 @@ func (b Bool) True() Bool {
 // False checks if value is false.
 func (b Bool) False() Bool {
 	b.checks(func() error {
-		if b.val != false {
+		if b.val {
 			return fmt.Errorf("expected 'false', got 'true'")
 		}
 		return nil
