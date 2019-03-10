@@ -8,6 +8,9 @@
 	<a href="https://godoc.org/github.com/3timeslazy/cheky">
 		<img src="https://godoc.org/github.com/3timeslazy/cheky?status.svg" alt="GoDoc">
 	</a>
+	<a href="https://golangci.com/r/github.com/3timeslazy/cheky">
+		<img src="https://golangci.com/badges/github.com/3timeslazy/cheky.svg" alt="GoDoc">
+	</a>
 </p>
 
 ## What is it?
